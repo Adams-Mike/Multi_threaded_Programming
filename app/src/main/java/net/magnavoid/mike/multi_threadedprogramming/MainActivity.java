@@ -4,9 +4,17 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
+
+
+    volatile List list = new ArrayList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,5 +42,23 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void create(View view) {
+        CreateClass makeFile = new CreateClass(getApplicationContext());
+        Thread aThread = new Thread(makeFile);
+        aThread.start();
+    }
+
+    public void load(View view) {
+        LoadClass loadFile = new LoadClass(getApplicationContext());
+        Thread aThread = new Thread(loadFile);
+        aThread.start();
+    }
+
+    public void clear(View view) {
+        ClearClass clearFile = new ClearClass();
+        Thread aThread = new Thread(clearFile);
+        aThread.start();
     }
 }
