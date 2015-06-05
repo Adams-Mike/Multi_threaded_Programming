@@ -1,38 +1,25 @@
 package net.magnavoid.mike.multi_threadedprogramming;
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
+ * This class reads a file into an ArrayList
  * Created by mike on 6/2/15.
  */
-public class LoadClass implements Runnable{
+public class LoadClass implements Runnable {
 
     public final Thread aThread;
-    private Context someContext;
+    DataClass dataClass;
 
-    /**
-     *
-     * @param context
-     */
-    public LoadClass(Context context) {
-        someContext = context;
+    public LoadClass(DataClass dataClass) {
+        this.dataClass = dataClass;
         aThread = new Thread(this);
     }
 
@@ -45,18 +32,22 @@ public class LoadClass implements Runnable{
     public void run() {
         String fileName = "numbers.txt";
         BufferedReader bufferedReader = null;
+        File fileToRead = new File(dataClass.getFiles(), fileName);
         Handler handler = new Handler(Looper.getMainLooper());
         try {
-            bufferedReader = new BufferedReader(new FileReader(fileName));
+            bufferedReader = new BufferedReader(new FileReader(fileToRead));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
         String line;
-
+        int tmpProgress = dataClass.getProgress();
         try {
-            while((line = bufferedReader.readLine()) != null) {
-                list.add(line);
+            int i = 1;
+            while ((line = bufferedReader.readLine()) != null) {
+                dataClass.addToList(line);
+                dataClass.setProgress(tmpProgress + i * 5);
+                i++;
                 try {
                     Thread.sleep(250);
                 } catch (InterruptedException e) {
@@ -71,14 +62,5 @@ public class LoadClass implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        final List finalList = list;
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        }, 1000);
-
     }
 }
